@@ -1,0 +1,74 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  namespace: chia
+  name: &_name chia-harvester
+  labels: &_selector { app: *_name }
+spec:
+  selector: { matchLabels: *_selector }
+  template:
+    metadata: { labels: *_selector }
+    spec:
+      hostNetwork: true
+      volumes:
+      - { name: &_secret_volume chia-secret-volume, secret: { secretName: chia-secret } }
+      - { name: &_plot_volume_1 chia-plot-volume-1, hostPath: { type: Directory, path: /mnt/sda1 } }
+      # - { name: &_plot_volume_2 chia-plot-volume-2, hostPath: { type: Directory, path: /mnt/sdb1 } }
+      # - { name: &_plot_volume_3 chia-plot-volume-3, hostPath: { type: Directory, path: /mnt/sdc1 } }
+      # - { name: &_plot_volume_4 chia-plot-volume-4, hostPath: { type: Directory, path: /mnt/sdd1 } }
+      # - { name: &_plot_volume_5 chia-plot-volume-5, hostPath: { type: Directory, path: /mnt/sde1 } }
+      # - { name: &_plot_volume_6 chia-plot-volume-6, hostPath: { type: Directory, path: /mnt/sdf1 } }
+      # - { name: &_plot_volume_7 chia-plot-volume-7, hostPath: { type: Directory, path: /mnt/sdg1 } }
+      # - { name: &_plot_volume_8 chia-plot-volume-8, hostPath: { type: Directory, path: /mnt/sdh1 } }
+      # - { name: &_plot_volume_9 chia-plot-volume-9, hostPath: { type: Directory, path: /mnt/sdi1 } }
+      # - { name: &_plot_volume_10 chia-plot-volume-10, hostPath: { type: Directory, path: /mnt/sdj1 } }
+      # - { name: &_plot_volume_11 chia-plot-volume-11, hostPath: { type: Directory, path: /mnt/sdk1 } }
+      # - { name: &_plot_volume_12 chia-plot-volume-12, hostPath: { type: Directory, path: /mnt/sdl1 } }
+      imagePullSecrets:
+      - name: registry-credential
+      containers:
+      - name: *_name
+        resources: { limits: { memory: "512Mi", cpu: "0.5" } }
+
+        #
+        # This hash points to ARM64 Chia 1.7.1.
+        # If you are running x64 bare metal or mixed, define tolerance(s)
+        # so that a different image is selected for each node.
+        # The label 'kubernetes.io/arch' is defined in the node's metadata.
+        #
+
+        image: ghcr.io/chia-network/chia:1.7.1@sha256:0538d811e7266f020d5a1ff0d79890a262f17ae19ffff0e142ff32aebc2f78db
+        imagePullPolicy: Always
+
+        volumeMounts:
+        - { name: *_secret_volume, mountPath: /secret/ca, readOnly: true }
+        - { name: *_plot_volume_1, mountPath: /plot-volume-1, readOnly: true }
+        # - { name: *_plot_volume_2, mountPath: /plot-volume-2, readOnly: true }
+        # - { name: *_plot_volume_3, mountPath: /plot-volume-3, readOnly: true }
+        # - { name: *_plot_volume_4, mountPath: /plot-volume-4, readOnly: true }
+        # - { name: *_plot_volume_5, mountPath: /plot-volume-5, readOnly: true }
+        # - { name: *_plot_volume_6, mountPath: /plot-volume-6, readOnly: true }
+        # - { name: *_plot_volume_7, mountPath: /plot-volume-7, readOnly: true }
+        # - { name: *_plot_volume_8, mountPath: /plot-volume-8, readOnly: true }
+        # - { name: *_plot_volume_9, mountPath: /plot-volume-9, readOnly: true }
+        # - { name: *_plot_volume_10, mountPath: /plot-volume-10, readOnly: true }
+        # - { name: *_plot_volume_11, mountPath: /plot-volume-11, readOnly: true }
+        # - { name: *_plot_volume_12, mountPath: /plot-volume-12, readOnly: true }
+        env:
+        - { name: service, value: harvester }
+
+        - { name: farmer_address, value: "192.168.0.16" }
+        - { name: farmer_port, value: "8447" }
+
+        - { name: plots_dir, value: "/plot-volume-1" }
+        # - name: plots_dir,
+        #   value: "/plot-volume-1:/plot-volume-2:/plot-volume-3:/plot-volume-4:/plot-volume-5:/plot-volume-6:/plot-volume-7:/plot-volume-8:/plot-volume-9:/plot-volume-10:/plot-volume-11:/plot-volume-12"
+
+        - { name: log_level, value: "ERROR" }
+        - { name: log_to_file, value: "false" }
+        - { name: upnp, value: "false" }
+        - { name: ca, value: "/secret/ca" }
+        - { name: keys, value: "copy" }
+        ports:
+        - containerPort: 8448
