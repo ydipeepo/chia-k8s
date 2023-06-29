@@ -38,7 +38,7 @@ spec:
         # The label 'kubernetes.io/arch' is defined in the node's metadata.
         #
 
-        image: ghcr.io/chia-network/chia:1.8.2@sha256:91c3a35cc0070ada78593824bfee3e7c4476c93d7c89a335e6b8625ae209639b
+        image: ghcr.io/chia-network/chia:main@sha256:d9fe5bda10615cc8432f85d1ae70ede5b1974170511dba16db56ebb6fe2a88c6
         imagePullPolicy: Always
 
         volumeMounts:
