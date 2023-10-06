@@ -32,13 +32,13 @@ spec:
         resources: { limits: { memory: "512Mi", cpu: "0.5" } }
 
         #
-        # This hash points to ARM64 Chia 2.0.1.
+        # This hash points to ARM64 Chia 2.1.0.
         # If you are running x64 bare metal or mixed, define tolerance(s)
         # so that a different image is selected for each node.
         # The label 'kubernetes.io/arch' is defined in the node's metadata.
         #
 
-        image: ghcr.io/chia-network/chia:main@sha256:5a04b3dbfaa9751b68e03246625dbd7279894b849271390afdf3ddcfcda2d8da
+        image: ghcr.io/chia-network/chia:2.1.0@sha256:6d5a4ee7d1ec068ac4c9207ada1ed89e309aa1040c71f0e8b69f8d5dbca8244f
         imagePullPolicy: Always
 
         volumeMounts:
